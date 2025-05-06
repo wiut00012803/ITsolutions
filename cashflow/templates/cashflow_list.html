@@ -1,0 +1,223 @@
+{# templates/cashflow/cashflow_list.html #}
+{% extends "base.html" %}
+{% block title %}Список ДДС{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Список движений денежных средств</h1>
+
+  {# форма фильтров #}
+  <form method="get" action="{% url 'cashflow_list' %}" class="filter-form">
+    <div class="filter-group">
+
+      <div class="filter-field">
+        <label for="id_date_from">От:</label>
+        <input
+          type="date"
+          id="id_date_from"
+          name="date_from"
+          value="{{ filter.date_from|default_if_none:'' }}"
+        >
+      </div>
+
+      <div class="filter-field">
+        <label for="id_date_to">До:</label>
+        <input
+          type="date"
+          id="id_date_to"
+          name="date_to"
+          value="{{ filter.date_to|default_if_none:'' }}"
+        >
+      </div>
+
+      <div class="filter-field">
+        <label for="id_status">Статус:</label>
+        <select id="id_status" name="status">
+          <option value=""
+            {% if not filter.status %}selected{% endif %}>
+            — Все —
+          </option>
+          {% for st in statuses %}
+            <option
+              value="{{ st.id }}"
+              {% if filter.status == st.id|add:"" %}selected{% endif %}>
+              {{ st.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="filter_type">Тип:</label>
+        <select id="filter_type" name="txn_type">
+          <option value=""
+            {% if not filter.txn_type %}selected{% endif %}>
+            — Все —
+          </option>
+          {% for tp in types %}
+            <option
+              value="{{ tp.id }}"
+              {% if filter.txn_type == tp.id|add:"" %}selected{% endif %}>
+              {{ tp.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="filter_category">Категория:</label>
+        <select id="filter_category" name="category">
+          <option value=""
+            {% if not filter.category %}selected{% endif %}>
+            — Все —
+          </option>
+          {% for cat in categories %}
+            <option
+              value="{{ cat.id }}"
+              data-type="{{ cat.txn_type.id }}"
+              {% if filter.category == cat.id|add:"" %}selected{% endif %}>
+              {{ cat.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <label for="filter_subcategory">Подкатегория:</label>
+        <select id="filter_subcategory" name="subcategory">
+          <option value=""
+            {% if not filter.subcategory %}selected{% endif %}>
+            — Все —
+          </option>
+          {% for sub in subcategories %}
+            <option
+              value="{{ sub.id }}"
+              data-category="{{ sub.category.id }}"
+              {% if filter.subcategory == sub.id|add:"" %}selected{% endif %}>
+              {{ sub.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {# кнопки на новую строку #}
+      <div class="filter-field filter-buttons">
+        <button type="submit" class="btn btn-primary">Применить</button>
+        <a href="{% url 'cashflow_list' %}" class="btn btn-secondary">Сбросить</a>
+      </div>
+    </div>
+  </form>
+
+  {# таблица с сортировкой #}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>
+          {% if current_order == "created_at" %}
+            <a href="{% url 'cashflow_list' %}?ordering=-created_at" class="sorted asc">Дата</a>
+          {% elif current_order == "-created_at" %}
+            <a href="{% url 'cashflow_list' %}?ordering=created_at" class="sorted desc">Дата</a>
+          {% else %}
+            <a href="{% url 'cashflow_list' %}?ordering=created_at">Дата</a>
+          {% endif %}
+        </th>
+        <th>
+          {% if current_order == "status__name" %}
+            <a href="{% url 'cashflow_list' %}?ordering=-status__name" class="sorted asc">Статус</a>
+          {% elif current_order == "-status__name" %}
+            <a href="{% url 'cashflow_list' %}?ordering=status__name" class="sorted desc">Статус</a>
+          {% else %}
+            <a href="{% url 'cashflow_list' %}?ordering=status__name">Статус</a>
+          {% endif %}
+        </th>
+        <th>
+          {% if current_order == "txn_type__name" %}
+            <a href="{% url 'cashflow_list' %}?ordering=-txn_type__name" class="sorted asc">Тип</a>
+          {% elif current_order == "-txn_type__name" %}
+            <a href="{% url 'cashflow_list' %}?ordering=txn_type__name" class="sorted desc">Тип</a>
+          {% else %}
+            <a href="{% url 'cashflow_list' %}?ordering=txn_type__name">Тип</a>
+          {% endif %}
+        </th>
+        <th>
+          {% if current_order == "category__name" %}
+            <a href="{% url 'cashflow_list' %}?ordering=-category__name" class="sorted asc">Категория</a>
+          {% elif current_order == "-category__name" %}
+            <a href="{% url 'cashflow_list' %}?ordering=category__name" class="sorted desc">Категория</a>
+          {% else %}
+            <a href="{% url 'cashflow_list' %}?ordering=category__name">Категория</a>
+          {% endif %}
+        </th>
+        <th>
+          {% if current_order == "subcategory__name" %}
+            <a href="{% url 'cashflow_list' %}?ordering=-subcategory__name" class="sorted asc">Подкатегория</a>
+          {% elif current_order == "-subcategory__name" %}
+            <a href="{% url 'cashflow_list' %}?ordering=subcategory__name" class="sorted desc">Подкатегория</a>
+          {% else %}
+            <a href="{% url 'cashflow_list' %}?ordering=subcategory__name">Подкатегория</a>
+          {% endif %}
+        </th>
+        <th>
+          {% if current_order == "amount" %}
+            <a href="{% url 'cashflow_list' %}?ordering=-amount" class="sorted asc">Сумма</a>
+          {% elif current_order == "-amount" %}
+            <a href="{% url 'cashflow_list' %}?ordering=amount" class="sorted desc">Сумма</a>
+          {% else %}
+            <a href="{% url 'cashflow_list' %}?ordering=amount">Сумма</a>
+          {% endif %}
+        </th>
+        <th>Комментарий</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for obj in object_list %}
+        <tr>
+          <td>{{ obj.created_at }}</td>
+          <td>{{ obj.status.name }}</td>
+          <td>{{ obj.txn_type.name }}</td>
+          <td>{{ obj.category.name }}</td>
+          <td>{{ obj.subcategory.name }}</td>
+          <td>{{ obj.amount }} ₽</td>
+          <td>{{ obj.comment|default:"—" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7">Записи не найдены.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include "pagination.html" %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const typeF = document.getElementById("filter_type"),
+        catF  = document.getElementById("filter_category"),
+        subF  = document.getElementById("filter_subcategory");
+
+  function filterCats() {
+    const t = typeF.value;
+    Array.from(catF.options).forEach(o => {
+      o.hidden = o.value && (t ? o.dataset.type !== t : false);
+    });
+    if(catF.value && catF.selectedOptions[0].hidden) {
+      catF.value = "";
+    }
+    filterSubs();
+  }
+  function filterSubs() {
+    const c = catF.value;
+    Array.from(subF.options).forEach(o => {
+      o.hidden = o.value && (c ? o.dataset.category !== c : false);
+    });
+    if(subF.value && subF.selectedOptions[0].hidden) {
+      subF.value = "";
+    }
+  }
+
+  typeF.addEventListener("change", filterCats);
+  catF.addEventListener("change", filterSubs);
+  filterCats();
+});
+</script>
+{% endblock %}

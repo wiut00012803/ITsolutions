@@ -1,0 +1,28 @@
+{# templates/pagination.html #}
+{% if page_obj.has_other_pages %}
+  <div class="pagination">
+    {# ← Назад #}
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if clean_qs %}&{{ clean_qs }}{% endif %}"
+         class="btn btn-secondary">
+        ‹ Назад
+      </a>
+    {% else %}
+      <span class="btn btn-secondary disabled">‹ Назад</span>
+    {% endif %}
+
+    <span class="page-info">
+      Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {# Вперёд → #}
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if clean_qs %}&{{ clean_qs }}{% endif %}"
+         class="btn btn-secondary">
+        Вперёд ›
+      </a>
+    {% else %}
+      <span class="btn btn-secondary disabled">Вперёд ›</span>
+    {% endif %}
+  </div>
+{% endif %}

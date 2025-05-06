@@ -1,0 +1,142 @@
+{# templates/cashflow/cashflow_form.html #}
+{% extends "base.html" %}
+
+{% block title %}Новая запись ДДС{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Новая запись ДДС</h1>
+
+  <form method="post" class="form-cashflow">
+    {% csrf_token %}
+
+    {# остальная валидация #}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="form-group">
+      {{ form.created_at.label_tag }}
+      {{ form.created_at }}
+      {{ form.created_at.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ form.status.label_tag }}
+      {{ form.status }}
+      {{ form.status.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ form.txn_type.label_tag }}
+      {{ form.txn_type }}
+      {{ form.txn_type.errors }}
+    </div>
+
+    {# --- КАТЕГОРИИ --- #}
+    <div class="form-group">
+      <label for="id_category">{{ form.category.label }}</label>
+      <select name="category"
+              id="id_category"
+              class="form-control"
+              required>
+        <option value="">— выберите категорию —</option>
+        {% for cat in cats %}
+          <option value="{{ cat.id }}"
+                  data-type="{{ cat.txn_type.id }}"
+                  {% if form.category.value|stringformat:"s" == cat.id|stringformat:"s" %}
+                    selected
+                  {% endif %}>
+            {{ cat.name }}
+          </option>
+        {% endfor %}
+      </select>
+      {{ form.category.errors }}
+    </div>
+
+    {# --- ПОДКАТЕГОРИИ --- #}
+    <div class="form-group">
+      <label for="id_subcategory">{{ form.subcategory.label }}</label>
+      <select name="subcategory"
+              id="id_subcategory"
+              class="form-control"
+              required>
+        <option value="">— выберите подкатегорию —</option>
+        {% for sub in subs %}
+          <option value="{{ sub.id }}"
+                  data-category="{{ sub.category.id }}"
+                  {% if form.subcategory.value|stringformat:"s" == sub.id|stringformat:"s" %}
+                    selected
+                  {% endif %}>
+            {{ sub.name }}
+          </option>
+        {% endfor %}
+      </select>
+      {{ form.subcategory.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ form.amount.label_tag }}
+      {{ form.amount }}
+      {{ form.amount.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ form.comment.label_tag }}
+      {{ form.comment }}
+      {{ form.comment.errors }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  // поля из шаблона
+  const typeField        = document.getElementById("id_txn_type"),
+        categoryField    = document.getElementById("id_category"),
+        subcategoryField = document.getElementById("id_subcategory");
+
+  function filterCategories() {
+    const selectedType = typeField.value;
+    Array.from(categoryField.options).forEach(opt => {
+      if (!opt.value) {
+        opt.hidden = false;
+      } else {
+        // прячем, если data-type != выбранный
+        opt.hidden = selectedType && opt.dataset.type !== selectedType;
+      }
+    });
+    // если текущее скрыто — сброс
+    if (categoryField.value &&
+        categoryField.selectedOptions[0].hidden) {
+      categoryField.value = "";
+    }
+    filterSubcategories();
+  }
+
+  function filterSubcategories() {
+    const selectedCat = categoryField.value;
+    Array.from(subcategoryField.options).forEach(opt => {
+      if (!opt.value) {
+        opt.hidden = false;
+      } else {
+        opt.hidden = selectedCat && opt.dataset.category !== selectedCat;
+      }
+    });
+    if (subcategoryField.value &&
+        subcategoryField.selectedOptions[0].hidden) {
+      subcategoryField.value = "";
+    }
+  }
+
+  // слушаем изменения
+  typeField.addEventListener("change", filterCategories);
+  categoryField.addEventListener("change", filterSubcategories);
+
+  // инициализация при загрузке
+  filterCategories();
+});
+</script>
+{% endblock %}

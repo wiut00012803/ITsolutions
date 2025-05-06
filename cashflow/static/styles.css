@@ -1,0 +1,235 @@
+:root {
+  --bg-page:      #f4f8fb;
+  --bg-panel:     #fff;
+  --clr-text:     #333;
+  --clr-primary:  #2c7db5;
+  --clr-primary-d:#226a98;
+  --clr-border:   #c0dbe8;
+  --clr-border-l: #d0e4f1;
+  --clr-muted:    #667;
+  --clr-error:    #d9534f;
+  --radius:       4px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--clr-text);
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: var(--bg-panel);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+h1 {
+  margin-bottom: 1rem;
+  color: var(--clr-primary);
+}
+
+nav {
+  margin-bottom: 1rem;
+}
+
+/* Кнопки */
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+}
+.btn-primary {
+  background: var(--clr-primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--clr-primary-d);
+}
+.btn-secondary {
+  background: var(--bg-panel);
+  color: var(--clr-primary);
+  border-color: var(--clr-primary);
+}
+.btn-secondary:hover {
+  background: var(--clr-primary);
+  color: #fff;
+}
+/* «Ссылочный» стиль */
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--clr-primary);
+  padding: 0;
+  margin-right: 1rem;
+}
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/* Таблица */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.table th,
+.table td {
+  border: 1px solid var(--clr-border-l);
+  padding: 0.5rem;
+}
+.table th {
+  background: #e3f2fd;
+  text-align: left;
+}
+/* Стилизация сортировки */
+.table th a {
+  color: var(--clr-primary);
+  text-decoration: none;
+}
+.table th a.sorted {
+  position: relative;
+  padding-right: 1.2em;
+}
+.table th a.sorted:after {
+  content: '';
+  position: absolute;
+  right: 0.4em;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0.4em solid transparent;
+}
+.table th a.sorted.asc:after {
+  border-bottom-color: var(--clr-primary);
+}
+.table th a.sorted.desc:after {
+  border-top-color: var(--clr-primary);
+}
+
+/* Формы и фильтры */
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-control,
+.filter-group input,
+.filter-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  background: var(--bg-page);
+  box-sizing: border-box;
+  font-size: 1rem;
+  color: var(--clr-text);
+}
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+.help-text {
+  display: block;
+  margin-top: 0.3rem;
+  color: var(--clr-muted);
+  font-size: 0.85rem;
+}
+.field-error {
+  margin-top: 0.3rem;
+  color: var(--clr-error);
+  font-size: 0.9rem;
+}
+
+/* Фильтры на главной */
+.filter-form {
+  margin-bottom: 1rem;
+}
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+.filter-group label {
+  color: var(--clr-primary);
+  white-space: nowrap;
+}
+.filter-group input[type="date"],
+.filter-group select {
+  max-width: 150px;
+  background: var(--bg-page);
+}
+
+/* пагинация */
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+.pagination .btn-link,
+.pagination .btn-secondary {
+  margin: 0;
+}
+
+/* Секции фильтров */
+.filter-form { margin-bottom: 1rem; }
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;  /* метка и поле не порвутся */
+}
+.filter-field > label {
+  margin-bottom: 0.25rem;
+  color: var(--clr-primary);
+  font-weight: 600;
+}
+.filter-field > input,
+.filter-field > select {
+  min-width: 130px;
+  padding: 0.5rem;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius);
+  background: var(--bg-page);
+  box-sizing: border-box;
+}
+.filter-buttons {
+  flex: 0 0 100%;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.table th a {
+  color: var(--clr-primary);
+  text-decoration: none;
+  position: relative;
+  padding-right: 1.2em;
+}
+.table th a:after {
+  content: "";
+  position: absolute;
+  right: 0.4em;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0.4em solid transparent;
+}
+.table th a.sorted.asc:after {
+  border-bottom-color: var(--clr-primary);
+}
+.table th a.sorted.desc:after {
+  border-top-color: var(--clr-primary);
+}

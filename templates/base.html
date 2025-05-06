@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}ДДС{% endblock %}</title>
+    <link rel="stylesheet" href="{% static '/styles.css' %}">
+</head>
+<body>
+<div class="container">
+    <nav>
+        <a href="{% url 'cashflow_list' %}" class="btn-link">Список ДДС</a>
+        <a href="{% url 'cashflow_create' %}" class="btn-link">Новая запись</a>
+        <a href="/admin/" class="btn-link">Админ</a>
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>
