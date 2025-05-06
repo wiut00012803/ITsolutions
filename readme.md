@@ -2,7 +2,7 @@
 ## Клонирование и установка
 
 ```powershell
-git clone <your-repo-url> dds_project
+git clone https://github.com/wiut00012803/ITsolutions.git dds_project
 cd dds_project
 python -m venv venv
 .venv\Scripts\activate
